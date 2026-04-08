@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import './App.css';
 
-const API_KEY = '87f56749c88278478e7a67dcfeaba273';
+const API_KEY = import.meta.env.VITE_SUNO_API_KEY;
 const API_URL = 'https://api.sunoapi.org/api/v1';
 
 const MODELS = [
