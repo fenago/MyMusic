@@ -123,7 +123,8 @@ function App() {
           prompt,
           model,
           instrumental: !withLyrics,
-          customMode: false
+          customMode: false,
+          callBackUrl: ""
         })
       });
 
