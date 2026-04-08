@@ -1,0 +1,63 @@
+:root {
+  --primary-glow: #6f5ef5;
+  --bg-color: #f3f4f6;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --card-border: rgba(255, 255, 255, 1);
+  --text-main: #111827;
+  --text-muted: #4b5563;
+  --accent: #8b5cf6;
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --input-text: #111827;
+  --badge-bg: rgba(139, 92, 246, 0.1);
+  --badge-border: rgba(139, 92, 246, 0.3);
+  --badge-text: #6d28d9;
+  --song-card-bg: rgba(255, 255, 255, 0.5);
+  --cover-bg: #e5e7eb;
+  --action-btn-bg: rgba(0, 0, 0, 0.05);
+  --action-btn-hover: rgba(0, 0, 0, 0.1);
+  --lyrics-bg: rgba(255, 255, 255, 0.6);
+  --header-text: #111827;
+  --icon-color: #4b5563;
+}
+
+[data-theme='dark'] {
+  --primary-glow: #6f5ef5;
+  --bg-color: #0d0f1a;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text-main: #f0f0f5;
+  --text-muted: #a0a5b5;
+  --accent: #aa77ff;
+  --input-bg: rgba(0, 0, 0, 0.2);
+  --input-text: #fff;
+  --badge-bg: rgba(170, 119, 255, 0.1);
+  --badge-border: rgba(170, 119, 255, 0.3);
+  --badge-text: #fff;
+  --song-card-bg: rgba(0, 0, 0, 0.2);
+  --cover-bg: #1a1c29;
+  --action-btn-bg: rgba(255, 255, 255, 0.05);
+  --action-btn-hover: rgba(255, 255, 255, 0.1);
+  --lyrics-bg: rgba(0, 0, 0, 0.2);
+  --header-text: #fff;
+  --icon-color: #a0a5b5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(111, 94, 245, 0.12), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.12), transparent 25%);
+  background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
