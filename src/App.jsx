@@ -321,6 +321,10 @@ function App() {
           </div>
         )}
       </main>
+
+      <footer style={{ marginTop: 'auto', paddingTop: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 500 }}>
+        Version 0.2
+      </footer>
     </div>
   );
 }
