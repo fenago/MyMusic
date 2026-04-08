@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   Music, Sparkles, Loader2, PlayCircle, Info, 
   Disc, DownloadCloud, Mic, MicOff, RefreshCcw,
-  Moon, Sun, Coins
+  Moon, Sun, Coins, Cloud, Wind, Droplets, MapPin, Search, Thermometer
 } from 'lucide-react';
 import './App.css';
 
@@ -28,16 +28,19 @@ function App() {
   const [songs, setSongs] = useState([]);
   const [error, setError] = useState('');
   const [credits, setCredits] = useState(null);
-  const [isDark, setIsDark] = useState(false); // Default to light theme
+  const [isDark, setIsDark] = useState(false); 
   
+  // Weather state
+  const [cityInput, setCityInput] = useState('Fort Lauderdale');
+  const [weatherData, setWeatherData] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+
   const pollIntervalRef = useRef(null);
 
-  // Initialize theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 
-  // Fetch initial credits
   const fetchCredits = async () => {
     try {
       const res = await fetch(`${API_URL}/generate/credit`, {
@@ -54,9 +57,53 @@ function App() {
     }
   };
 
+  const fetchWeather = async (cityName) => {
+    setWeatherLoading(true);
+    try {
+      const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`);
+      const geoData = await geoRes.json();
+      
+      if (!geoData.results || geoData.results.length === 0) {
+        throw new Error('City not found');
+      }
+      
+      const { latitude, longitude, name, admin1, country } = geoData.results[0];
+      
+      // Fetch Weather with advanced daily metrics
+      const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,uv_index_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`);
+      const weatherJson = await weatherRes.json();
+      
+      setWeatherData({
+        name: `${name}, ${admin1 || country}`,
+        temp: Math.round(weatherJson.current.temperature_2m),
+        unit: weatherJson.current_units.temperature_2m,
+        humidity: Math.round(weatherJson.current.relative_humidity_2m),
+        wind: Math.round(weatherJson.current.wind_speed_10m),
+        windUnit: weatherJson.current_units.wind_speed_10m,
+        high: Math.round(weatherJson.daily.temperature_2m_max[0]),
+        low: Math.round(weatherJson.daily.temperature_2m_min[0]),
+        uv: weatherJson.daily.uv_index_max[0]
+      });
+    } catch (err) {
+      console.error('Weather error:', err);
+    } finally {
+      setWeatherLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchCredits();
+    fetchWeather('Fort Lauderdale');
   }, []);
+
+  const handleCitySearch = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (cityInput.trim()) {
+        fetchWeather(cityInput);
+      }
+    }
+  };
 
   const startPolling = (tid) => {
     if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
@@ -84,7 +131,7 @@ function App() {
           if (currentStatus === 'SUCCESS') {
             clearInterval(pollIntervalRef.current);
             setIsGenerating(false);
-            fetchCredits(); // update credits
+            fetchCredits();
           } else if (
             currentStatus === 'CREATE_TASK_FAILED' || 
             currentStatus === 'GENERATE_AUDIO_FAILED' ||
@@ -94,13 +141,13 @@ function App() {
             clearInterval(pollIntervalRef.current);
             setIsGenerating(false);
             setError(`Generation failed: ${currentStatus}`);
-            fetchCredits(); // fetch credits just in case
+            fetchCredits();
           }
         }
       } catch (err) {
         console.error('Polling error:', err);
       }
-    }, 5000); // Poll every 5 seconds
+    }, 5000);
   };
 
   const generateMusic = async (e) => {
@@ -133,7 +180,7 @@ function App() {
       if (data.code === 200 && data.data?.taskId) {
         setTaskId(data.data.taskId);
         startPolling(data.data.taskId);
-        fetchCredits(); // immediate deduct check
+        fetchCredits();
       } else {
         setIsGenerating(false);
         setError(data.msg || 'Failed to start generation task');
@@ -177,6 +224,48 @@ function App() {
           <Coins size={18} color="var(--accent)" />
           {credits !== null ? `${credits} Credits` : '...'}
         </div>
+        
+        {/* Weather Widget */}
+        <div className="weather-widget">
+          <div className="weather-search">
+            <Search size={14} color="var(--icon-color)" />
+            <input 
+               type="text" 
+               className="weather-input"
+               value={cityInput}
+               onChange={(e) => setCityInput(e.target.value)}
+               onKeyDown={handleCitySearch}
+               placeholder="Search city..."
+             />
+          </div>
+          {weatherLoading ? (
+            <div className="weather-info"><Loader2 size={16} className="generating-spinner" /> Loading...</div>
+          ) : weatherData ? (
+             <div className="weather-info">
+               <span className="weather-location" title={weatherData.name}>
+                 <MapPin size={14} color="var(--accent)" /> {weatherData.name.split(',')[0]}
+               </span>
+               <span className="weather-detail">
+                 <Cloud size={14} color="var(--icon-color)" /> {weatherData.temp}{weatherData.unit}
+               </span>
+               <span className="weather-detail hidden-mobile">
+                 <Thermometer size={14} color="#ef4444" /> H:{weatherData.high}° L:{weatherData.low}°
+               </span>
+               <span className="weather-detail hidden-mobile">
+                 <Droplets size={14} color="#3b82f6" /> {weatherData.humidity}%
+               </span>
+               <span className="weather-detail hidden-mobile">
+                 <Wind size={14} color="#10b981" /> {weatherData.wind} {weatherData.windUnit}
+               </span>
+               <span className="weather-detail hidden-mobile" title="UV Index">
+                 <Sun size={14} color="#f59e0b" /> UV {weatherData.uv}
+               </span>
+             </div>
+          ) : (
+            <div className="weather-info" style={{color: '#ff6b6b'}}>City not found</div>
+          )}
+        </div>
+
         <button 
           className="theme-toggle" 
           onClick={() => setIsDark(!isDark)}
