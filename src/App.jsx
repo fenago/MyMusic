@@ -124,7 +124,7 @@ function App() {
           model,
           instrumental: !withLyrics,
           customMode: false,
-          callBackUrl: ""
+          callBackUrl: "https://example.com/callback"
         })
       });
 
