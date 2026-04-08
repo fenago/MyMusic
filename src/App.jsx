@@ -277,9 +277,9 @@ function App() {
 
       <header className="header">
         <h1 className="title">
-          Sonic AI <Sparkles size={36} color="var(--accent)" style={{display: 'inline', verticalAlign: 'text-bottom'}} />
+          DrLee.App <Sparkles size={36} color="var(--accent)" style={{display: 'inline', verticalAlign: 'text-bottom'}} />
         </h1>
-        <p className="subtitle">Turn your ideas into studio-quality music with Suno AI.</p>
+        <p className="subtitle">"Where words fail, music speaks. The true art of making the soul bloom."</p>
       </header>
 
       <main className="main-content">
