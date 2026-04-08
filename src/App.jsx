@@ -124,7 +124,7 @@ function App() {
           model,
           instrumental: !withLyrics,
           customMode: false,
-          callBackUrl: "https://example.com/callback"
+          callBackUrl: "https://mymusic123.netlify.app/api/callback"
         })
       });
 
